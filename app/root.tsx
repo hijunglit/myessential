@@ -9,6 +9,9 @@ import {
 
 import type { Route } from "./+types/root";
 import "./app.css";
+import { TooltipProvider } from "./common/components/ui/tooltip";
+import Navigation from "./common/components/navigation";
+import Sidebar from "./common/components/sidebar";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -33,7 +36,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        {children}
+        <TooltipProvider>{children}</TooltipProvider>
         <ScrollRestoration />
         <Scripts />
       </body>
@@ -42,7 +45,21 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  return <Outlet />;
+  return (
+    <div className="grid h-screen grid-cols-[260px_1fr] grid-rows-[auto_1fr]">
+      <aside className="row-span-2">
+        <Sidebar />
+      </aside>
+      <header className="px-6 py-4">
+        <Navigation />
+      </header>
+      <main className="overflow-auto">
+        <div className="w-full max-w-5xl px-6 py-8">
+          <Outlet />
+        </div>
+      </main>
+    </div>
+  );
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
