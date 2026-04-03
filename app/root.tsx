@@ -54,7 +54,7 @@ export default function App() {
         <Navigation />
       </header>
       <main className="overflow-auto">
-        <div className="w-full max-w-5xl px-6 py-8">
+        <div className="mx-auto w-full max-w-5xl px-6 py-8">
           <Outlet />
         </div>
       </main>
