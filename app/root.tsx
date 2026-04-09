@@ -50,11 +50,11 @@ export default function App() {
       <aside className="row-span-2">
         <Sidebar />
       </aside>
-      <header className="px-6 py-4">
+      <header className="px-6 py-4 h-17">
         <Navigation />
       </header>
-      <main className="overflow-auto">
-        <div className="mx-auto w-full max-w-5xl px-6 py-8">
+      <main className="max-h-[calc(100vh-68px)]">
+        <div className="w-full max-w-7xl h-full p-4">
           <Outlet />
         </div>
       </main>

@@ -1,4 +1,10 @@
-import { ArchiveIcon, FilePlusIcon, Plus, SquarePenIcon } from "lucide-react";
+import {
+  ArchiveIcon,
+  Ellipsis,
+  FilePlusIcon,
+  Plus,
+  SquarePenIcon,
+} from "lucide-react";
 import { Button } from "~/common/components/ui/button";
 import {
   Card,
@@ -17,25 +23,29 @@ export type TaskCardItem = {
 export type TaskCardProps = {
   title: string;
   tasks: TaskCardItem[];
-  menuButtonLabel?: string;
   addCardLabel?: string;
+  bgColor: string;
 };
 
 export function TaskCard({
   title,
   tasks,
-  menuButtonLabel = "menu icon",
   addCardLabel = "Add a card",
+  bgColor,
 }: TaskCardProps) {
   return (
-    <Card className="space-y-5 rounded-xl bg-[#EED7FD] h-fit">
+    <Card
+      className={`space-y-5 rounded-xl ${bgColor} h-fit max-h-full w-[284px]`}
+    >
       <CardHeader>
         <div className="flex justify-between items-center">
           <CardTitle>{title}</CardTitle>
-          <Button variant="ghost">{menuButtonLabel}</Button>
+          <Button variant="ghost" className="cursor-pointer">
+            <Ellipsis />
+          </Button>
         </div>
       </CardHeader>
-      <CardContent className="space-y-2">
+      <CardContent className="space-y-2 overflow-x-auto">
         {tasks.map((task) => (
           <div
             key={task.id}
