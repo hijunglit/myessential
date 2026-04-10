@@ -1,5 +1,13 @@
 import { TaskCard } from "~/features/boards/components/task-card";
 import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/card";
+import { Button } from "../components/ui/button";
+import { Ellipsis } from "lucide-react";
 
 const TASK_LABEL = "기본 레이아웃 만들기";
 
@@ -8,9 +16,9 @@ const singleTask = Array.from({ length: 1 }, (_, idx) => ({
   label: TASK_LABEL,
 }));
 
-const tasks = Array.from({ length: 30 }, (_, idx) => ({
+const tasks = Array.from({ length: 3 }, (_, idx) => ({
   id: String(idx),
-  label: TASK_LABEL,
+  label: TASK_LABEL + idx,
 }));
 
 export default function homePage() {
@@ -28,49 +36,41 @@ export default function homePage() {
         <TaskCard title="Archive :)" tasks={tasks} bgColor="bg-[#F1F2F4]" />
       </section> */}
       <DragDropContext onDragEnd={onDragEnd}>
-        <div>
-          <Droppable droppableId="one">
-            {(magic) => (
-              <ul ref={magic.innerRef} {...magic.droppableProps}>
-                <Draggable draggableId="draggable-1" index={0}>
-                  {(magic) => (
-                    <li
-                      ref={magic.innerRef}
-                      {...magic.draggableProps}
-                      {...magic.dragHandleProps}
-                    >
-                      one
-                    </li>
-                  )}
-                </Draggable>
-
-                <Draggable draggableId="draggable-2" index={1}>
-                  {(magic) => (
-                    <li
-                      ref={magic.innerRef}
-                      {...magic.draggableProps}
-                      {...magic.dragHandleProps}
-                    >
-                      two
-                    </li>
-                  )}
-                </Draggable>
-
-                <Draggable draggableId="draggable-3" index={2}>
-                  {(magic) => (
-                    <li
-                      ref={magic.innerRef}
-                      {...magic.draggableProps}
-                      {...magic.dragHandleProps}
-                    >
-                      three
-                    </li>
-                  )}
-                </Draggable>
-              </ul>
-            )}
-          </Droppable>
-        </div>
+        <Card
+          className={`space-y-5 rounded-xl bg-[#EED7FD] h-fit max-h-full w-[284px]`}
+        >
+          <CardHeader>
+            <div className="flex justify-between items-center">
+              <CardTitle>To do</CardTitle>
+              <Button variant="ghost" className="cursor-pointer">
+                <Ellipsis />
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-2 overflow-x-auto">
+            <Droppable droppableId="one">
+              {(magic) => (
+                <div ref={magic.innerRef} {...magic.droppableProps}>
+                  {tasks.map((task, index) => (
+                    <Draggable draggableId={task.id} index={index}>
+                      {(magic) => (
+                        <div
+                          className="bg-white rounded-lg flex items-center justify-between p-2"
+                          ref={magic.innerRef}
+                          {...magic.dragHandleProps}
+                          {...magic.draggableProps}
+                        >
+                          {task.label}
+                        </div>
+                      )}
+                    </Draggable>
+                  ))}
+                  {magic.placeholder}
+                </div>
+              )}
+            </Droppable>
+          </CardContent>
+        </Card>
       </DragDropContext>
     </div>
   );
