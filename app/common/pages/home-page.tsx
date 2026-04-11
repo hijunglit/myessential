@@ -1,5 +1,10 @@
 import { TaskCard } from "~/features/boards/components/task-card";
-import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
+import {
+  DragDropContext,
+  Draggable,
+  Droppable,
+  type DropResult,
+} from "@hello-pangea/dnd";
 import {
   Card,
   CardContent,
@@ -7,7 +12,8 @@ import {
   CardTitle,
 } from "../components/ui/card";
 import { Button } from "../components/ui/button";
-import { Ellipsis } from "lucide-react";
+import { Ellipsis, ReceiptTurkishLiraIcon } from "lucide-react";
+import { create } from "zustand";
 
 const TASK_LABEL = "기본 레이아웃 만들기";
 
@@ -22,11 +28,14 @@ const tasks = Array.from({ length: 3 }, (_, idx) => ({
 }));
 
 export default function homePage() {
+  const useCardItems = create((set) => {
+    cardItems: tasks;
+  });
   const onDragEnd = () => {};
   return (
     <div className="flex flex-col bg-[url('https://d2k1ftgv7pobq7.cloudfront.net/images/backgrounds/gradients/rainbow.svg')] w-full h-full rounded-4xl">
       <nav className="bg-[#684B95] p-6 rounded-t-4xl">
-        <h1 className="text-white font-bold">My Trello board</h1>
+        <h1 className="text-white font-bold text-xl">My Trello board</h1>
       </nav>
       {/* 카드 칼럼 */}
       {/* <section className="flex gap-2 p-6 overflow-x-auto">
@@ -52,7 +61,11 @@ export default function homePage() {
               {(magic) => (
                 <div ref={magic.innerRef} {...magic.droppableProps}>
                   {tasks.map((task, index) => (
-                    <Draggable draggableId={task.id} index={index}>
+                    <Draggable
+                      draggableId={task.id}
+                      key={task.id}
+                      index={index}
+                    >
                       {(magic) => (
                         <div
                           className="bg-white rounded-lg flex items-center justify-between p-2"
