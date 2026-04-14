@@ -27,11 +27,42 @@ const tasks = Array.from({ length: 3 }, (_, idx) => ({
   label: TASK_LABEL + idx,
 }));
 
+// Define types for state & actions
+interface BearState {
+  bears: number;
+  food: string;
+  feed: (food: string) => void;
+}
+
+// Create store using the curried form of `create`
+export const useBearStore = create<BearState>()((set) => ({
+  bears: 2,
+  food: "honey",
+  feed: (food) => set(() => ({ food })),
+}));
+
+const useCards = create()((set) => ({
+  cards: tasks,
+  setCards: () =>
+    set((oldCards: any, source: any, draggableId: any, destination: any) => {
+      const copyCards = [...oldCards];
+      copyCards.splice(source.index, 1);
+      copyCards.splice(destination?.index, 0, {
+        id: String(draggableId),
+        label:
+          oldCards.find((item: any) => item.id === draggableId)?.label ??
+          "null",
+      });
+      return copyCards;
+    }),
+}));
+
 export default function homePage() {
-  const useCardItems = create((set) => {
-    cardItems: tasks;
-  });
-  const onDragEnd = () => {};
+  const onDragEnd = ({ draggableId, destination, source }: DropResult) => {
+    if (!destination) return;
+    const cards = useCards((s) => s.cards);
+    useCards((state) => state.setCards);
+  };
   return (
     <div className="flex flex-col bg-[url('https://d2k1ftgv7pobq7.cloudfront.net/images/backgrounds/gradients/rainbow.svg')] w-full h-full rounded-4xl">
       <nav className="bg-[#684B95] p-6 rounded-t-4xl">
