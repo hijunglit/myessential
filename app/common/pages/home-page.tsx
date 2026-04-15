@@ -41,27 +41,37 @@ export const useBearStore = create<BearState>()((set) => ({
   feed: (food) => set(() => ({ food })),
 }));
 
-const useCards = create()((set) => ({
-  cards: tasks,
-  setCards: () =>
-    set((oldCards: any, source: any, draggableId: any, destination: any) => {
-      const copyCards = [...oldCards];
-      copyCards.splice(source.index, 1);
-      copyCards.splice(destination?.index, 0, {
-        id: String(draggableId),
-        label:
-          oldCards.find((item: any) => item.id === draggableId)?.label ??
-          "null",
-      });
-      return copyCards;
-    }),
+interface CardState {
+  cards: { id: string; label: string }[];
+  setCards: (
+    oldCards: any,
+    source: any,
+    destination: any,
+    draggableId: any,
+  ) => void;
+}
+export const useCardStore = create<CardState>()((set) => ({
+  cards: [
+    { id: "id:1", label: "label:1" },
+    { id: "id:2", label: "label:2" },
+    { id: "id:3", label: "label:3" },
+  ],
+  setCards(oldCards, source, destination, draggableId) {
+    const copyCards = [...oldCards];
+    copyCards.splice(source.index, 1);
+    copyCards.splice(destination?.index, 0, draggableId);
+    return copyCards;
+  },
 }));
 
 export default function homePage() {
+  const cards = useCardStore((s) => s.cards);
+
   const onDragEnd = ({ draggableId, destination, source }: DropResult) => {
     if (!destination) return;
-    const cards = useCards((s) => s.cards);
-    useCards((state) => state.setCards);
+    useCardStore((state) =>
+      state.setCards(cards, source, destination, draggableId),
+    );
   };
   return (
     <div className="flex flex-col bg-[url('https://d2k1ftgv7pobq7.cloudfront.net/images/backgrounds/gradients/rainbow.svg')] w-full h-full rounded-4xl">
@@ -91,7 +101,7 @@ export default function homePage() {
             <Droppable droppableId="one">
               {(magic) => (
                 <div ref={magic.innerRef} {...magic.droppableProps}>
-                  {tasks.map((task, index) => (
+                  {cards.map((task, index) => (
                     <Draggable
                       draggableId={task.id}
                       key={task.id}
