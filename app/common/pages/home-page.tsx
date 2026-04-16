@@ -43,36 +43,38 @@ export const useBearStore = create<BearState>()((set) => ({
 
 interface CardState {
   cards: { id: string; label: string }[];
-  setCards: (
-    oldCards: any,
-    source: any,
-    destination: any,
-    draggableId: any,
+  reorderCards: (
+    source: DropResult["source"],
+    destination: DropResult["destination"],
   ) => void;
 }
-export const useCardStore = create<CardState>()((set) => ({
+
+const useCardStore = create<CardState>()((set) => ({
   cards: [
     { id: "id:1", label: "label:1" },
     { id: "id:2", label: "label:2" },
     { id: "id:3", label: "label:3" },
   ],
-  setCards(oldCards, source, destination, draggableId) {
-    const copyCards = [...oldCards];
-    copyCards.splice(source.index, 1);
-    copyCards.splice(destination?.index, 0, draggableId);
-    return copyCards;
+  reorderCards: (source, destination) => {
+    if (!destination) return;
+    set((state) => {
+      const next = [...state.cards];
+      const [removed] = next.splice(source.index, 1);
+      next.splice(destination.index, 0, removed);
+      return { cards: next };
+    });
   },
 }));
 
 export default function homePage() {
   const cards = useCardStore((s) => s.cards);
+  const reorderCards = useCardStore((s) => s.reorderCards);
 
-  const onDragEnd = ({ draggableId, destination, source }: DropResult) => {
+  const onDragEnd = ({ destination, source }: DropResult) => {
     if (!destination) return;
-    useCardStore((state) =>
-      state.setCards(cards, source, destination, draggableId),
-    );
+    reorderCards(source, destination);
   };
+
   return (
     <div className="flex flex-col bg-[url('https://d2k1ftgv7pobq7.cloudfront.net/images/backgrounds/gradients/rainbow.svg')] w-full h-full rounded-4xl">
       <nav className="bg-[#684B95] p-6 rounded-t-4xl">
